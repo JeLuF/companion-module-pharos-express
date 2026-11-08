@@ -58,25 +58,34 @@ export function UpdateActions(self: ModuleInstance): void {
 			options: [space, byte('intensity', 'Intensity (0-255)', 255), fade],
 			callback: async (e) => self.setMaster(e.options.space, e.options.intensity, e.options.fade),
 		},
-		master_step: {
-			name: 'Change master intensity',
-			description:
-				'Raises or lowers a space master by a percentage of full scale, starting from the last known value. Add the space under "Spaces to monitor" (feedback must be on) so the value is polled; otherwise the starting point is the last value set by this module.',
-			options: [
-				space,
-				{ id: 'step', type: 'number', label: 'Step (% of full, negative to lower)', default: 10, min: -100, max: 100 },
-				fade,
-			],
-			callback: async (e) => {
-				const cur = self.getMaster(e.options.space)
-				if (cur === undefined) {
-					self.log('warn', `Master intensity of space ${e.options.space} unknown; monitor it or set it first`)
-					return
+		master_step: self.config.feedback
+			? {
+					name: 'Change master intensity',
+					description:
+						'Raises or lowers a space master by a percentage of full scale, starting from the last known value. Add the space under "Spaces to monitor" so its value is polled. Only available when feedback is enabled.',
+					options: [
+						space,
+						{
+							id: 'step',
+							type: 'number',
+							label: 'Step (% of full, negative to lower)',
+							default: 10,
+							min: -100,
+							max: 100,
+						},
+						fade,
+					],
+					callback: async (e) => {
+						const cur = self.getMaster(e.options.space)
+						if (cur === undefined) {
+							self.log('warn', `Master intensity of space ${e.options.space} unknown; monitor it or set it first`)
+							return
+						}
+						const next = Math.max(0, Math.min(255, Math.round(cur + (e.options.step / 100) * 255)))
+						self.setMaster(e.options.space, next, e.options.fade)
+					},
 				}
-				const next = Math.max(0, Math.min(255, Math.round(cur + (e.options.step / 100) * 255)))
-				self.setMaster(e.options.space, next, e.options.fade)
-			},
-		},
+			: false,
 		override: {
 			name: 'Space override',
 			description: 'Express default fade for overrides is 2 seconds.',

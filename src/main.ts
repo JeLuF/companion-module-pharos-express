@@ -45,6 +45,8 @@ export default class ModuleInstance extends InstanceBase<ModuleSchema> {
 	async configUpdated(config: ModuleConfig): Promise<void> {
 		this.config = config
 		this.stop()
+		this.updateActions()
+		this.updatePresets()
 		this.updateVariableDefinitions()
 		this.start()
 	}

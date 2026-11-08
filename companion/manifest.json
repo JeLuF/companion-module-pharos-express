@@ -5,7 +5,7 @@
 	"name": "pharos-express",
 	"shortname": "express",
 	"description": "Control Pharos Express lighting controllers via the Simple Ethernet API (UDP)",
-	"version": "0.0.0",
+	"version": "0.2.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-pharos-express.git",
 	"bugs": "https://github.com/bitfocus/companion-module-pharos-express/issues",
